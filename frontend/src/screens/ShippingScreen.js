@@ -1,0 +1,54 @@
+import React, { useState } from 'react'
+import { Form, Button } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+import FormContainer from '../components/FormContainer'
+import CheckoutSteps from '../components/CheckoutSteps'
+import { saveShippingAddress } from '../actions/cartActions' //Importing actions & then dispatching them below
+
+const ShippingScreen = ({ history }) => {
+    //select the cart part of the state from state, in order to get the data, & fill the initial states in useState functions below
+    //It's gonna pull the stuff from local storage & fill the fields below
+    const cart = useSelector(state => state.cart)
+    const { shippingAddress } = cart 
+
+    const [address, setAddress] = useState(shippingAddress.address)
+    const [city, setCity] = useState(shippingAddress.city)
+    const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
+    const [country, setCountry] = useState(shippingAddress.country)
+
+    const dispatch = useDispatch() //creating dispatch
+
+    const submitHandler = (e) => {
+        e.preventDefault()
+        dispatch(saveShippingAddress({ address, city, postalCode, country }))  //all the form data
+        history.push('/payment')  //to select the payment process
+    }
+
+    return (
+        <FormContainer>
+            <CheckoutSteps step1 step2 />
+            <h1>Shipping</h1>
+            <Form onSubmit={submitHandler}>
+                <Form.Group controlId='address'>
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control type='text' placeholder='Enter Address' value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
+                </Form.Group>
+                <Form.Group controlId='city'>
+                    <Form.Label>City</Form.Label>
+                    <Form.Control type='text' placeholder='Enter City' value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
+                </Form.Group>
+                <Form.Group controlId='postalCode'>
+                    <Form.Label>Postal Code</Form.Label>
+                    <Form.Control type='text' placeholder='Enter Postal Code' value={postalCode} onChange={(e) => setPostalCode(e.target.value)}></Form.Control>
+                </Form.Group>
+                <Form.Group controlId='country'>
+                    <Form.Label>Country</Form.Label>
+                    <Form.Control type='text' placeholder='Enter Country' value={country} onChange={(e) => setCountry(e.target.value)}></Form.Control>
+                </Form.Group>
+                <Button type='submit' variant='success'>Continue</Button>
+            </Form>
+        </FormContainer>
+    )
+}
+
+export default ShippingScreen
